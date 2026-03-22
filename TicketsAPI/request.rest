@@ -1,0 +1,210 @@
+##########################################################################################
+# TICKETS API - EXAMPLE REQUESTS
+# 
+# Instructions:
+# 1. Install "REST Client" extension in VS Code (humao.rest-client)
+# 2. Update variables below with your local server URL and tokens
+# 3. Click "Send Request" button above each request
+#
+##########################################################################################
+
+### VARIABLES
+@baseUrl = http://localhost:3001
+@accessToken = your_access_token_here
+@refreshToken = your_refresh_token_here
+
+##########################################################################################
+# USERS - AUTHENTICATION
+##########################################################################################
+
+### Register a new user
+POST {{baseUrl}}/users/register
+Content-Type: application/json
+
+{
+  "username": "example_user",
+  "fullname": "Example User",
+  "pwd": "SecurePassword123!",
+  "role": 1
+}
+
+### Login and get tokens
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "username": "example_user",
+  "pwd": "SecurePassword123!"
+}
+
+### Refresh access token
+POST {{baseUrl}}/users/token
+Content-Type: application/json
+
+{
+  "token": "{{refreshToken}}"
+}
+
+### Logout
+POST {{baseUrl}}/users/logout
+Content-Type: application/json
+
+{
+  "token": "{{refreshToken}}"
+}
+
+##########################################################################################
+# USERS - MANAGEMENT
+##########################################################################################
+
+### Get all users
+GET {{baseUrl}}/users
+Authorization: Bearer {{accessToken}}
+
+### Get user by ID
+GET {{baseUrl}}/users/1
+Authorization: Bearer {{accessToken}}
+
+### Get available roles
+GET {{baseUrl}}/users/roles
+Authorization: Bearer {{accessToken}}
+
+### Update user information
+POST {{baseUrl}}/users/update/1
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "username": "updated_username",
+  "fullname": "Updated Full Name",
+  "pwd": "NewPassword123!"
+}
+
+### Update FCM token (for push notifications)
+POST {{baseUrl}}/users/updateToken
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "fcmToken": "your_firebase_cloud_messaging_token_here"
+}
+
+### Set user online status
+POST {{baseUrl}}/users/setOnlineStatus/1
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "online": 1
+}
+
+### Delete user (soft delete)
+POST {{baseUrl}}/users/delete/1
+Authorization: Bearer {{accessToken}}
+
+### Reset user password
+POST {{baseUrl}}/users/reset-password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "username": "example_user",
+  "newPwd": "NewSecurePassword123!"
+}
+
+##########################################################################################
+# TICKETS - MANAGEMENT
+##########################################################################################
+
+### Create a new ticket
+POST {{baseUrl}}/tickets/createTicket
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "createdBy": 1,
+  "title": "Example ticket title",
+  "responsible": 2
+}
+
+### Get ticket by ID
+GET {{baseUrl}}/tickets/1
+Authorization: Bearer {{accessToken}}
+
+### Conclude (close) a ticket
+PUT {{baseUrl}}/tickets/concludeTicket
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "id": 1
+}
+
+### Reassign ticket to different user
+PUT {{baseUrl}}/tickets/reassignTicket
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "id": 1,
+  "newResponsibleId": 2
+}
+
+##########################################################################################
+# MESSAGES - CHAT & NOTIFICATIONS
+##########################################################################################
+
+### Send message
+POST {{baseUrl}}/messages/sendMessage
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ticket": 1,
+  "sender": 1,
+  "receiver": 2,
+  "content": "This is an example message"
+}
+
+### Mark message as delivered
+POST {{baseUrl}}/messages/markDelivered/1
+Authorization: Bearer {{accessToken}}
+
+### Get all chats for user
+GET {{baseUrl}}/messages/getChats/1
+Authorization: Bearer {{accessToken}}
+
+### Get messages from specific conversation
+GET {{baseUrl}}/messages/getMessages?ticket=1&contact=2
+Authorization: Bearer {{accessToken}}
+
+### Mark messages as read
+PUT {{baseUrl}}/messages/markAsRead
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ticketId": 1
+}
+
+### Get concluded (closed) tickets with pagination
+GET {{baseUrl}}/messages/getConcludedTickets?page=1&limit=15
+Authorization: Bearer {{accessToken}}
+
+##########################################################################################
+# HEALTH CHECK
+##########################################################################################
+
+### API Health Check
+GET {{baseUrl}}/
+
+##########################################################################################
+# NOTES:
+# - Update {{baseUrl}} with your server URL and port
+# - Update {{accessToken}} with a valid JWT token from login response
+# - Update {{refreshToken}} with a valid refresh token from login response
+# - All IDs (user, ticket, message) should be replaced with real values
+# - For file uploads, use multipart/form-data content type
+# - All timestamps in responses are in ISO 8601 format
+##########################################################################################
